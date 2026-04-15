@@ -1,17 +1,40 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ==========================================
+// 1. BÖLÜM: SERVÝS HAZIRLIKLARI (BUILDER)
+// ==========================================
 
 builder.Services.AddControllers();
-// Simülasyon servisini arka plan görevi olarak sisteme kaydediyoruz
-builder.Services.AddHostedService<DroneTrackingAPI.Services.DroneSimulationService>();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Swagger (API dökümantasyonu) ayarlarý
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// SignalR Servisi
+builder.Services.AddSignalR();
+
+// Simülasyon Servisimizi (Arka plan motoru) ekliyoruz
+builder.Services.AddHostedService<DroneTrackingAPI.Services.DroneSimulationService>();
+
+// CORS Politikasý (React'in bizimle haberleþmesi için güvenlik duvarýný deliyoruz)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // React'in portu
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // SignalR için þart
+    });
+});
+
+// Tüm hazýrlýklar bitti, projeyi inþa et
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ==========================================
+// 2. BÖLÜM: UYGULAMA KURALLARI (APP)
+// ==========================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -20,8 +43,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// DÝKKAT: CORS, Authorization'dan önce olmak zorundadýr!
+app.UseCors("AllowReactApp");
+
 app.UseAuthorization();
 
 app.MapControllers();
 
+// SignalR Yayýn Frekansýmýzý (Endpoint) belirliyoruz
+app.MapHub<DroneTrackingAPI.Hubs.DroneHub>("/droneHub");
+
+// FÝNÝÞ ÇÝZGÝSÝ: Uygulamayý ayaða kaldýr (Bundan sonra kod yazýlmaz)
 app.Run();
