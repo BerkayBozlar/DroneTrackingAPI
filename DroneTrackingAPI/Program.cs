@@ -41,7 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // DÝKKAT: CORS, Authorization'dan önce olmak zorundadýr!
 app.UseCors("AllowReactApp");

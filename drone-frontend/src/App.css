@@ -1,0 +1,159 @@
+/* Genel Ayarlar ve Koyu Tema Arkaplanı */
+:root {
+  background-color: #12141d;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-container {
+  width: 95%; /* Ekrana daha iyi yayılması için */
+  max-width: 1400px; /* Alanı genişlettik ki kartlar dışarı taşmasın */
+  padding: 2rem;
+  margin: 0 auto; /* Sayfanın tam ortasına hizalar */
+}
+
+/* Başlık Kısmı */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid #2a2d3e;
+  padding-bottom: 1rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #00f2fe;
+}
+
+.status-badge {
+  background-color: #1e293b;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+  margin-right: 2rem;
+}
+
+/* Kartların Izgara Dizilimi */
+.drone-grid {
+  display: grid;
+  /* Her karta ideal bir boyut verip, yan yana 3 tane sığacak şekilde ayarlıyoruz */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  justify-items: center; /* Kartları kendi içlerinde ortalar */
+}
+
+/* Drone Kart Tasarımı */
+.drone-card {
+  width: 100%;
+  max-width: 380px; /* Kartlar çok uzamasın diye sınır koyduk */
+  background: linear-gradient(145deg, #1e2130 0%, #171925 100%);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid #2a2d3e;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+.drone-card.active {
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+  border-color: #3b82f6;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #f1f5f9;
+}
+
+.status-indicator {
+  background-color: #10b981;
+  color: #111827;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+/* Canlı Veri Satırları */
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+}
+
+.data-row .label {
+  color: #94a3b8;
+}
+
+.data-row .value {
+  font-family: monospace;
+  font-size: 1.1rem;
+  color: #e2e8f0;
+}
+
+/* Batarya Barı */
+.battery-container {
+  margin-top: 1.5rem;
+}
+
+.battery-container .label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #94a3b8;
+}
+
+.battery-bar-bg {
+  width: 100%;
+  height: 8px;
+  background-color: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.battery-bar-fill {
+  height: 100%;
+  background-color: #10b981;
+  transition: width 0.5s ease-in-out, background-color 0.3s ease;
+}
+
+.battery-bar-fill.danger {
+  background-color: #ef4444; /* %20 altına düşerse kırmızı olur */
+}
+
+/* Son Güncelleme Metni */
+.timestamp {
+  margin-top: 1.5rem;
+  text-align: right;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Yanıp Sönme Efekti */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}

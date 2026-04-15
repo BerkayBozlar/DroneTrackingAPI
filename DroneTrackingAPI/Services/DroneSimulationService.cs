@@ -18,27 +18,52 @@ namespace DroneTrackingAPI.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Drone Simülasyon motoru başlatıldı! Veriler SignalR ile yayına giriyor...");
+            _logger.LogInformation("6 Kargo Drone'luk Filo havalanıyor! Gerçekçi uçuş başladı...");
             Random rnd = new Random();
 
+            // 1. AŞAMA: 6 Adet Drone'u uçuşa hazırla (Sadece bir kere oluşturulur)
+            var droneFleet = new List<DroneTelemetry>();
+            for (int i = 1; i <= 6; i++)
+            {
+                droneFleet.Add(new DroneTelemetry
+                {
+                    DroneId = $"DRONE-00{i}",
+                    Latitude = 39.920770 + (rnd.NextDouble() * 0.04 - 0.02),
+                    Longitude = 32.854110 + (rnd.NextDouble() * 0.04 - 0.02),
+                    Altitude = rnd.Next(100, 300),
+                    BatteryLevel = rnd.Next(80, 100), // Uçuşa dolu pille başlarlar
+                    Status = "Görevde",
+                    Timestamp = DateTime.UtcNow
+                });
+            }
+
+            // 2. AŞAMA: Havada tut ve verileri yavaş yavaş değiştir (Sonsuz Döngü)
             while (!stoppingToken.IsCancellationRequested)
             {
-                var telemetry = new DroneTelemetry
+                foreach (var drone in droneFleet)
                 {
-                    DroneId = "DRONE-001",
-                    Latitude = 39.920770 + (rnd.NextDouble() * 0.02 - 0.01),
-                    Longitude = 32.854110 + (rnd.NextDouble() * 0.02 - 0.01),
-                    Altitude = rnd.Next(100, 500),
-                    BatteryLevel = rnd.Next(10, 100),
-                    Status = "Uçuyor",
-                    Timestamp = DateTime.UtcNow
-                };
+                    // Gerçekçi Uçuş: Koordinatları çok minik hareket ettir
+                    drone.Latitude += (rnd.NextDouble() * 0.0002 - 0.0001);
+                    drone.Longitude += (rnd.NextDouble() * 0.0002 - 0.0001);
 
-                // Eskisi gibi terminale yazdırıyoruz ki arkada çalıştığını görelim
-                _logger.LogInformation($"[CANLI YAYIN] Drone-001 | Konum: {telemetry.Latitude:F5}, {telemetry.Longitude:F5}");
+                    // İrtifa rüzgara göre 1-2 metre değişsin
+                    drone.Altitude += rnd.Next(-2, 3);
 
-                // İŞTE BÜYÜK AN: Veriyi "ReceiveDroneData" adlı kanaldan tüm React kullanıcılarına fırlatıyoruz!
-                await _hubContext.Clients.All.SendAsync("ReceiveDroneData", telemetry, stoppingToken);
+                    // Gerçekçi Batarya: Batarya asla artmaz, her saniye %10 ihtimalle 1 puan düşer
+                    if (rnd.Next(0, 10) > 8 && drone.BatteryLevel > 0)
+                    {
+                        drone.BatteryLevel -= 1;
+                    }
+
+                    // Eğer pili bitmek üzereyse durumunu güncelle
+                    if (drone.BatteryLevel <= 20) drone.Status = "Dönüşe Geçti";
+                    if (drone.BatteryLevel == 0) drone.Status = "İndi";
+
+                    drone.Timestamp = DateTime.UtcNow;
+
+                    // Güncel halini React'e fırlat
+                    await _hubContext.Clients.All.SendAsync("ReceiveDroneData", drone, stoppingToken);
+                }
 
                 await Task.Delay(1000, stoppingToken);
             }
