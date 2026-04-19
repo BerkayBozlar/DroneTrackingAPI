@@ -14,7 +14,7 @@
         public int BatteryLevel { get; set; } // % Batarya
         public string Status { get; set; }    // "Uçuyor", "Teslim Ediyor", "Dönüyor"
 
-        // Verinin üretildiği an (Gerçek zamanlı akışın kalbi)
+        // Verinin üretildiği an 
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

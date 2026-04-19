@@ -7,9 +7,8 @@ function App() {
   const [connectionStatus, setConnectionStatus] = useState('Bağlanıyor...');
 
   useEffect(() => {
-    // DİKKAT: C# projen çalıştığında terminalde yazan port numarasını buraya girmelisin!
-    // Örnek: http://localhost:5200/droneHub veya https://localhost:7100/droneHub
-    const backendUrl = "http://localhost:5025/droneHub"; // LÜTFEN KENDİ PORTUNLA DEĞİŞTİR
+
+    const backendUrl = "http://localhost:5025/droneHub"; // KENDİ PORTUNLA DEĞİŞTİR
 
     const newConnection = new HubConnectionBuilder()
       .withUrl(backendUrl)
